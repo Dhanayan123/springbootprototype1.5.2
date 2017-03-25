@@ -1,0 +1,57 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'idea'
+apply plugin: 'org.springframework.boot'
+apply plugin: 'gradle-one-jar'
+apply plugin: 'application'
+
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Pozhil',
+                   'Implementation-Version': "0.0.1"
+    }
+    baseName = 'pozhil'
+	version = "0.0.1"
+}
+
+[compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:1.5.2.RELEASE")
+	classpath ('com.github.rholder:gradle-one-jar:1.0.4')
+    }
+}
+
+//excluding tomcat inorder to use undertow server
+configurations {
+    compile.exclude module: "spring-boot-starter-tomcat"
+}
+
+repositories {
+    mavenCentral()
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+dependencies {
+    compile("org.springframework.boot:spring-boot-starter-web")
+    compile("org.springframework.boot:spring-boot-starter-actuator")
+    compile("org.springframework.boot:spring-boot-starter-undertow")
+    testCompile("org.springframework.boot:spring-boot-starter-test")
+    testCompile("junit:junit")
+}
+
+task oneJar(type: OneJar) {
+	mainClass = 'com.pozhil.PozhilApplication'
+}
+
+artifacts {
+	oneJar
+}
+
